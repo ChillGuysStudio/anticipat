@@ -45,6 +45,17 @@ export default function RootLayout({
             right: 0,
             bottom: 0,
             zIndex: 9999,
+            overflowY: "auto",
+            padding: "2rem 0",
+          },
+          modalContent: {
+            margin: "auto",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          },
+          card: {
+            margin: "auto",
           }
         }
       }}
