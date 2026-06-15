@@ -57,3 +57,25 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
+// DELETE /api/profile — delete the authenticated user's loan profile and action history
+export async function DELETE() {
+  const { userId } = await auth();
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const db = await getDB();
+    await db.batch([
+      db.prepare("DELETE FROM loan_profiles WHERE user_id = ?").bind(userId),
+      db.prepare("DELETE FROM monthly_actions WHERE user_id = ?").bind(userId)
+    ]);
+
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error("[DELETE /api/profile]", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+

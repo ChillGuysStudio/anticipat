@@ -6,6 +6,7 @@ export function MoneyInput({
   label,
   value,
   onChange,
+  onBlur,
   helper,
   min = 0
 }: {
@@ -13,6 +14,7 @@ export function MoneyInput({
   label: string;
   value: number;
   onChange: (value: number) => void;
+  onBlur?: () => void;
   helper?: string;
   min?: number;
 }) {
@@ -28,6 +30,7 @@ export function MoneyInput({
           type="number"
           value={Number.isFinite(value) ? value : 0}
           onChange={(event) => onChange(Number(event.target.value))}
+          onBlur={onBlur}
           className="pr-14"
         />
         <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">

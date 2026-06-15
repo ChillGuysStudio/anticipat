@@ -63,7 +63,7 @@ type ProfileFormState = Omit<
 
 const defaultProfileForm: ProfileFormState = {
   remainingBalance: 802514,
-  originalBalance: 800000,
+  originalBalance: 1000000,
   monthlyPayment: 7000,
   monthsLeft: 240,
   currentEmergencyFund: 0
@@ -83,6 +83,39 @@ export default function Home() {
   React.useEffect(() => {
     setState(loadAppState());
     setHydrated(true);
+  }, []);
+
+  // Monitor for Clerk modal and disable page scrolling while it is open
+  React.useEffect(() => {
+    if (typeof document === "undefined") return;
+
+    const targetNode = document.body;
+    const config = { childList: true, subtree: true };
+
+    const callback = () => {
+      const modal = document.querySelector(".cl-modalContainer");
+      if (modal) {
+        document.documentElement.style.setProperty("overflow", "hidden", "important");
+        document.body.style.setProperty("overflow", "hidden", "important");
+        document.body.style.setProperty("height", "100vh", "important");
+      } else {
+        document.documentElement.style.removeProperty("overflow");
+        document.body.style.removeProperty("overflow");
+        document.body.style.removeProperty("height");
+      }
+    };
+
+    callback();
+
+    const observer = new MutationObserver(callback);
+    observer.observe(targetNode, config);
+
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty("overflow");
+      document.body.style.removeProperty("overflow");
+      document.body.style.removeProperty("height");
+    };
   }, []);
 
   // Fetch from D1 (authoritative) when auth is loaded and user is signed in
@@ -149,20 +182,7 @@ export default function Home() {
             )
           )}
         </div>
-        {!isSignedIn && (
-          <Alert className="bg-muted/50 border-dashed">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <span className="text-muted-foreground">
-                Using local storage. Sign in to back up and sync your progress.
-              </span>
-              <SignInButton mode="modal">
-                <Button size="sm" variant="outline" className="self-start sm:self-auto">
-                  Sign in
-                </Button>
-              </SignInButton>
-            </div>
-          </Alert>
-        )}
+
         <Tabs value={tab} onValueChange={(value) => setTab(value as TabValue)}>
           <TabsList>
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
@@ -194,7 +214,12 @@ function SetupScreen({ onCreate }: { onCreate: (profile: LoanProfile) => void })
 
   function submit(event: React.FormEvent) {
     event.preventDefault();
-    const result = SetupProfileSchema.safeParse(form);
+    let finalForm = form;
+    if ((form.originalBalance ?? 0) < form.remainingBalance) {
+      finalForm = { ...form, originalBalance: form.remainingBalance };
+      setForm(finalForm);
+    }
+    const result = SetupProfileSchema.safeParse(finalForm);
 
     if (!result.success) {
       setError("Check the loan values and try again.");
@@ -320,6 +345,11 @@ function ProfileFields({
           label="Original mortgage balance"
           value={form.originalBalance ?? 0}
           onChange={(val) => onChange({ ...form, originalBalance: val })}
+          onBlur={() => {
+            if ((form.originalBalance ?? 0) < form.remainingBalance) {
+              onChange({ ...form, originalBalance: form.remainingBalance });
+            }
+          }}
         />
         <MoneyInput
           id="monthlyPayment"
@@ -843,13 +873,20 @@ function SettingsSection({
     profileToForm(profile)
   );
   const [message, setMessage] = React.useState<string | null>(null);
+  const [showConfirmReset, setShowConfirmReset] = React.useState(false);
+  const { isSignedIn } = useAuth();
 
   React.useEffect(() => {
     setForm(profileToForm(profile));
   }, [profile]);
 
   function saveSettings() {
-    const result = SetupProfileSchema.safeParse(form);
+    let finalForm = form;
+    if ((form.originalBalance ?? 0) < form.remainingBalance) {
+      finalForm = { ...form, originalBalance: form.remainingBalance };
+      setForm(finalForm);
+    }
+    const result = SetupProfileSchema.safeParse(finalForm);
     if (!result.success) {
       setMessage("Check the loan values and try again.");
       return;
@@ -870,17 +907,52 @@ function SettingsSection({
     setMessage("Settings saved.");
   }
 
+  async function handleReset() {
+    if (isSignedIn) {
+      try {
+        await fetch("/api/profile", { method: "DELETE" });
+      } catch (err) {
+        console.error("Failed to delete profile from server:", err);
+      }
+    }
+    setState(emptyAppState);
+    saveAppState(emptyAppState);
+    setShowConfirmReset(false);
+  }
+
   return (
     <div className="space-y-6">
       {message ? <Alert>{message}</Alert> : null}
       <SectionCard title="Loan profile">
         <ProfileFields form={form} onChange={setForm} />
-        <div className="mt-5 flex justify-end">
+        <div className="mt-5 flex justify-between gap-4">
+          <Button type="button" variant="destructive" onClick={() => setShowConfirmReset(true)}>
+            Reset mortgage
+          </Button>
           <Button type="button" onClick={saveSettings}>
             Save changes
           </Button>
         </div>
       </SectionCard>
+
+      <Dialog open={showConfirmReset} onOpenChange={(open) => (!open ? setShowConfirmReset(false) : undefined)}>
+        <DialogContent onClose={() => setShowConfirmReset(false)}>
+          <DialogHeader>
+            <DialogTitle>Reset mortgage profile?</DialogTitle>
+            <DialogDescription>
+              This will permanently delete your mortgage profile and all monthly actions. This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setShowConfirmReset(false)}>
+              Cancel
+            </Button>
+            <Button type="button" variant="destructive" onClick={handleReset}>
+              Reset mortgage
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -945,6 +1017,7 @@ function getRemainingRepaymentTotal(profile: LoanProfile) {
 function profileToForm(profile: LoanProfile): ProfileFormState {
   return {
     remainingBalance: profile.remainingBalance,
+    originalBalance: profile.originalBalance ?? profile.remainingBalance,
     monthlyPayment: profile.monthlyPayment,
     monthsLeft: profile.monthsLeft,
     currentEmergencyFund: profile.currentEmergencyFund,

@@ -20,13 +20,7 @@ const BaseLoanProfile = z.object({
   updatedAt: z.string()
 });
 
-export const LoanProfileSchema = BaseLoanProfile.refine(
-  (data) => data.originalBalance >= data.remainingBalance,
-  {
-    message: "Original mortgage balance cannot be less than the remaining balance.",
-    path: ["originalBalance"]
-  }
-);
+export const LoanProfileSchema = BaseLoanProfile;
 
 export const MonthlyActionSchema = z.object({
   id: z.string().min(1),
@@ -51,12 +45,6 @@ export const SetupProfileSchema = BaseLoanProfile.omit({
   updatedAt: true,
   startDate: true,
   originalTermMonths: true
-}).refine(
-  (data) => data.originalBalance >= data.remainingBalance,
-  {
-    message: "Original mortgage balance cannot be less than the remaining balance.",
-    path: ["originalBalance"]
-  }
-);
+});
 
 export type SetupProfileInput = z.infer<typeof SetupProfileSchema>;

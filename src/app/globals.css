@@ -57,9 +57,4 @@ textarea {
   background: hsl(var(--primary) / 0.16);
 }
 
-/* Prevent background page scrolling when Clerk modal is open */
-html:has(.cl-modalContainer),
-body:has(.cl-modalContainer) {
-  overflow: hidden !important;
-}
 
