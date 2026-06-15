@@ -1,0 +1,9 @@
+name = "anticipat"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".vercel/output/static"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "anticipat-db"
+database_id = "8b6a9cda-506e-4271-b59d-614e56b1e7e6"

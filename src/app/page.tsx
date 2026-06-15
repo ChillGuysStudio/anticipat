@@ -39,10 +39,13 @@ import {
 } from "@/lib/finance/schedule";
 import { formatMonthKey, formatMonths, formatYearsAndMonths, getCurrentMonthKey } from "@/lib/format/dates";
 import { formatMoney, formatPercent } from "@/lib/format/money";
+import { UserButton } from "@clerk/nextjs";
 import {
   emptyAppState,
   loadAppState,
-  saveAppState
+  saveAppState,
+  syncFromServer,
+  syncToServer
 } from "@/lib/storage/local-store";
 import { SetupProfileSchema } from "@/lib/validation/schemas";
 import type { AppState, LoanProfile, MonthlyAction } from "@/types/app";
@@ -74,14 +77,20 @@ export default function Home() {
   const [hydrated, setHydrated] = React.useState(false);
   const [tab, setTab] = React.useState<TabValue>("dashboard");
 
+  // On mount: load from localStorage immediately (fast), then fetch from D1 (authoritative)
   React.useEffect(() => {
     setState(loadAppState());
     setHydrated(true);
+    syncFromServer().then((serverState) => {
+      setState(serverState);
+    });
   }, []);
 
+  // On every state change: persist locally and fire-and-forget sync to D1
   React.useEffect(() => {
     if (hydrated) {
       saveAppState(state);
+      syncToServer(state);
     }
   }, [hydrated, state]);
 
@@ -104,10 +113,13 @@ export default function Home() {
   return (
     <AppShell>
       <div className="space-y-6">
-        <PageHeader
-          title="Anticipat"
-          subtitle="Plan your Prima Casă Plus early repayment."
-        />
+        <div className="flex items-center justify-between">
+          <PageHeader
+            title="Anticipat"
+            subtitle="Plan your Prima Casă Plus early repayment."
+          />
+          <UserButton afterSignOutUrl="/sign-in" />
+        </div>
         <Tabs value={tab} onValueChange={(value) => setTab(value as TabValue)}>
           <TabsList>
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
