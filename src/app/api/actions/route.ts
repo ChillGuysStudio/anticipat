@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import { getDB } from "@/lib/db/client";
 import type { MonthlyAction } from "@/types/app";
 
-export const runtime = "edge";
 
 // GET /api/actions — list all monthly actions for the authenticated user
 export async function GET() {

@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import { getDB } from "@/lib/db/client";
 import type { LoanProfile } from "@/types/app";
 
-export const runtime = "edge";
 
 // GET /api/profile — load the authenticated user's loan profile from D1
 export async function GET() {
