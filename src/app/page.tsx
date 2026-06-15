@@ -118,7 +118,7 @@ export default function Home() {
             title="Anticipat"
             subtitle="Plan your Prima Casă Plus early repayment."
           />
-          <UserButton afterSignOutUrl="/sign-in" />
+          <UserButton />
         </div>
         <Tabs value={tab} onValueChange={(value) => setTab(value as TabValue)}>
           <TabsList>

@@ -21,7 +21,7 @@ export async function GET() {
       .bind(userId)
       .all<{ data: string }>();
 
-    const actions: MonthlyAction[] = rows.results.map((r) =>
+    const actions: MonthlyAction[] = rows.results.map((r: { data: string }) =>
       JSON.parse(r.data)
     );
 
