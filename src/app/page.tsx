@@ -317,7 +317,7 @@ function ProfileFields({
       <div className="grid gap-4 sm:grid-cols-2">
         <MoneyInput
           id="originalBalance"
-          label="Original mortgage balance (optional)"
+          label="Original mortgage balance"
           value={form.originalBalance ?? 0}
           onChange={(val) => onChange({ ...form, originalBalance: val })}
         />

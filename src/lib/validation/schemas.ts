@@ -6,9 +6,9 @@ const percent = z.coerce.number().finite().min(0).max(100);
 const months = z.coerce.number().int().positive();
 const repaymentStrategy = z.enum(["reduce_term", "reduce_payment"]);
 
-export const LoanProfileSchema = z.object({
+const BaseLoanProfile = z.object({
   remainingBalance: positiveMoney,
-  originalBalance: money.optional(),
+  originalBalance: positiveMoney,
   annualInterestRate: percent,
   monthlyPayment: positiveMoney,
   monthsLeft: months,
@@ -19,6 +19,14 @@ export const LoanProfileSchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string()
 });
+
+export const LoanProfileSchema = BaseLoanProfile.refine(
+  (data) => data.originalBalance >= data.remainingBalance,
+  {
+    message: "Original mortgage balance cannot be less than the remaining balance.",
+    path: ["originalBalance"]
+  }
+);
 
 export const MonthlyActionSchema = z.object({
   id: z.string().min(1),
@@ -36,13 +44,19 @@ export const AppStateSchema = z.object({
   version: z.literal(1)
 });
 
-export const SetupProfileSchema = LoanProfileSchema.omit({
+export const SetupProfileSchema = BaseLoanProfile.omit({
   annualInterestRate: true,
   repaymentStrategy: true,
   createdAt: true,
   updatedAt: true,
   startDate: true,
   originalTermMonths: true
-});
+}).refine(
+  (data) => data.originalBalance >= data.remainingBalance,
+  {
+    message: "Original mortgage balance cannot be less than the remaining balance.",
+    path: ["originalBalance"]
+  }
+);
 
 export type SetupProfileInput = z.infer<typeof SetupProfileSchema>;
