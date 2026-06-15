@@ -1,0 +1,100 @@
+- generic [ref=e1]:
+  - button "Open Next.js Dev Tools" [ref=e9] [cursor=pointer]:
+    - img [ref=e10]
+  - alert [ref=e41]
+  - main [ref=e42]:
+    - generic [ref=e43]:
+      - generic [ref=e45]:
+        - heading "Anticipat" [level=1] [ref=e46]
+        - paragraph [ref=e47]: Plan your Prima Casă Plus early repayment.
+      - generic [ref=e48]:
+        - tablist [ref=e49]:
+          - tab "Dashboard" [ref=e50] [cursor=pointer]
+          - tab "History" [active] [selected] [ref=e51] [cursor=pointer]
+          - tab "Settings" [ref=e52] [cursor=pointer]
+        - tabpanel [ref=e133]:
+          - generic [ref=e134]:
+            - generic [ref=e135]:
+              - generic [ref=e137]:
+                - generic [ref=e138]: Total added to Anticipat Reserve
+                - generic [ref=e139]: 0 MDL
+              - generic [ref=e141]:
+                - generic [ref=e142]: Total paid anticipat
+                - generic [ref=e143]: 1,287 MDL
+              - generic [ref=e145]:
+                - generic [ref=e146]: Regular months paid
+                - generic [ref=e147]: "1"
+              - generic [ref=e149]:
+                - generic [ref=e150]: Estimated months saved
+                - generic [ref=e151]: 1 month
+            - generic [ref=e152]:
+              - heading "Confirmed monthly actions" [level=3] [ref=e155]
+              - table [ref=e158]:
+                - rowgroup [ref=e159]:
+                  - row "Month Regular payment Anticipat Reserve Early repayment Early type Skipped Note" [ref=e160]:
+                    - columnheader "Month" [ref=e161]
+                    - columnheader "Regular payment" [ref=e162]
+                    - columnheader "Anticipat Reserve" [ref=e163]
+                    - columnheader "Early repayment" [ref=e164]
+                    - columnheader "Early type" [ref=e165]
+                    - columnheader "Skipped" [ref=e166]
+                    - columnheader "Note" [ref=e167]
+                - rowgroup [ref=e168]:
+                  - row "June 2026 Paid 0 MDL 1,287 MDL Reduce term No" [ref=e169]:
+                    - cell "June 2026" [ref=e170]
+                    - cell "Paid" [ref=e171]
+                    - cell "0 MDL" [ref=e172]
+                    - cell "1,287 MDL" [ref=e173]
+                    - cell "Reduce term" [ref=e174]
+                    - cell "No" [ref=e175]
+                    - cell [ref=e176]
+            - generic [ref=e177]:
+              - generic [ref=e178]:
+                - heading "Anticipat Reserve progress" [level=3] [ref=e181]
+                - application [ref=e186]:
+                  - generic [ref=e197]:
+                    - generic [ref=e200]: 2026-06
+                    - generic [ref=e201]:
+                      - generic [ref=e203]: 0k
+                      - generic [ref=e205]: 0k
+                      - generic [ref=e207]: 0k
+                      - generic [ref=e209]: 0k
+                      - generic [ref=e211]: 0k
+              - generic [ref=e212]:
+                - heading "Early repayments over time" [level=3] [ref=e215]
+                - application [ref=e220]:
+                  - generic [ref=e235]:
+                    - generic [ref=e238]: 2026-06
+                    - generic [ref=e239]:
+                      - generic [ref=e241]: 0k
+                      - generic [ref=e243]: 0k
+                      - generic [ref=e245]: 1k
+                      - generic [ref=e247]: 1k
+                      - generic [ref=e249]: 1k
+              - generic [ref=e250]:
+                - heading "Loan balance comparison" [level=3] [ref=e253]
+                - generic [ref=e257]:
+                  - list [ref=e259]:
+                    - listitem [ref=e260]:
+                      - img "Current path legend icon" [ref=e261]
+                      - text: Current path
+                    - listitem [ref=e263]:
+                      - img "Without early repayment legend icon" [ref=e264]
+                      - text: Without early repayment
+                  - application [ref=e266]:
+                    - generic [ref=e281]:
+                      - generic [ref=e282]:
+                        - generic [ref=e284]: M1
+                        - generic [ref=e286]: M39
+                        - generic [ref=e288]: M77
+                        - generic [ref=e290]: M115
+                        - generic [ref=e292]: M153
+                        - generic [ref=e294]: M191
+                        - generic [ref=e296]: M229
+                      - generic [ref=e297]:
+                        - generic [ref=e299]: 0k
+                        - generic [ref=e301]: 200k
+                        - generic [ref=e303]: 400k
+                        - generic [ref=e305]: 600k
+                        - generic [ref=e307]: 800k
+  - generic [ref=e308]: 200k

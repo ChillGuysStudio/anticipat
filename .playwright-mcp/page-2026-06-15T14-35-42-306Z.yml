@@ -1,0 +1,65 @@
+- generic [active] [ref=e1]:
+  - button "Open Next.js Dev Tools" [ref=e9] [cursor=pointer]:
+    - img [ref=e10]
+  - alert [ref=e41]
+  - main [ref=e42]:
+    - generic [ref=e43]:
+      - generic [ref=e45]:
+        - heading "Anticipat" [level=1] [ref=e46]
+        - paragraph [ref=e47]: Plan your Prima Casă Plus early repayment.
+      - generic [ref=e48]:
+        - tablist [ref=e49]:
+          - tab "Dashboard" [selected] [ref=e50] [cursor=pointer]
+          - tab "History" [ref=e51] [cursor=pointer]
+          - tab "Settings" [ref=e52] [cursor=pointer]
+        - tabpanel [ref=e53]:
+          - generic [ref=e55]:
+            - generic [ref=e57]:
+              - generic [ref=e59]:
+                - heading "This month's money" [level=3] [ref=e60]
+                - paragraph [ref=e61]: Choose monthly payment, term reduction, payment reduction, or any combination.
+              - generic [ref=e62]:
+                - generic [ref=e63]:
+                  - generic [ref=e64]:
+                    - text: Available this month
+                    - generic [ref=e65]:
+                      - spinbutton "Available this month" [ref=e66]: "5000"
+                      - generic: MDL
+                  - generic [ref=e67]:
+                    - generic [ref=e68]:
+                      - generic [ref=e69]:
+                        - generic [ref=e70]: Pay a month
+                        - generic [ref=e71]: 1,287 MDL
+                      - paragraph [ref=e72]: Reserve plus this month gives you 5,000 MDL, enough to make a term-reducing anticipat payment.
+                    - generic [ref=e73]:
+                      - generic [ref=e74]:
+                        - generic [ref=e75]: Reduce monthly payment
+                        - generic [ref=e76]: 5,000 MDL
+                      - paragraph [ref=e77]: No reserve target needed. Pay any extra amount directly as anticipat and choose “Reduce monthly payment”.
+                - generic [ref=e79]:
+                  - generic [ref=e80]: You can pay enough anticipat to remove about one month, or pay any smaller amount to reduce the monthly payment.
+                  - button "Confirm action" [ref=e81] [cursor=pointer]
+            - generic [ref=e82]:
+              - heading "Loan snapshot" [level=3] [ref=e85]
+              - generic [ref=e87]:
+                - generic [ref=e88]:
+                  - generic [ref=e89]: Remaining balance
+                  - generic [ref=e90]: 800,000 MDL
+                - generic [ref=e91]:
+                  - generic [ref=e92]: Monthly payment
+                  - generic [ref=e93]: 7,000 MDL
+                - generic [ref=e94]:
+                  - generic [ref=e95]: Interest this month
+                  - generic [ref=e96]: 5,713 MDL
+                - generic [ref=e97]:
+                  - generic [ref=e98]: Principal this month
+                  - generic [ref=e99]: 1,287 MDL
+                - generic [ref=e100]:
+                  - generic [ref=e101]: Months left
+                  - generic [ref=e102]: 20 years
+                - generic [ref=e103]:
+                  - generic [ref=e104]: Anticipat Reserve
+                  - generic [ref=e105]: 0 MDL
+                - generic [ref=e106]:
+                  - generic [ref=e107]: Program rate
+                  - generic [ref=e108]: 8.57%

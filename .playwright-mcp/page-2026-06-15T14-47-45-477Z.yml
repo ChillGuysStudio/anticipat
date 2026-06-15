@@ -1,0 +1,32 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - heading "Set up your Prima Casă Plus mortgage" [level=1] [ref=e5]
+        - paragraph [ref=e6]: Enter the payment from your schedule. The other loan value fills itself in.
+      - generic [ref=e7]:
+        - heading "Loan details" [level=3] [ref=e10]
+        - generic [ref=e11]:
+          - generic [ref=e13]:
+            - generic [ref=e14]:
+              - text: Monthly payment
+              - generic [ref=e15]:
+                - spinbutton "Monthly payment" [ref=e16]: "7000"
+                - generic: MDL
+            - generic [ref=e17]:
+              - text: Remaining mortgage balance
+              - generic [ref=e18]:
+                - spinbutton "Remaining mortgage balance" [ref=e19]: "800000"
+                - generic: MDL
+            - generic [ref=e20]:
+              - text: Months left
+              - spinbutton "Months left" [ref=e21]: "240"
+            - generic [ref=e22]:
+              - text: Current Anticipat savings
+              - generic [ref=e23]:
+                - spinbutton "Current Anticipat savings" [ref=e24]: "0"
+                - generic: MDL
+          - button "Save mortgage profile" [ref=e26] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=e32] [cursor=pointer]:
+    - img [ref=e33]
+  - alert [ref=e36]

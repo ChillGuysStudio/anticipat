@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 98%;
+  --foreground: 20 14% 8%;
+  --card: 0 0% 100%;
+  --card-foreground: 20 14% 8%;
+  --primary: 173 80% 26%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 20 14% 96%;
+  --secondary-foreground: 20 14% 12%;
+  --muted: 20 14% 94%;
+  --muted-foreground: 20 6% 40%;
+  --accent: 43 74% 49%;
+  --accent-foreground: 20 14% 12%;
+  --destructive: 0 72% 45%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 20 9% 88%;
+  --input: 20 9% 84%;
+  --ring: 173 80% 26%;
+  --radius: 8px;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+html {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+body {
+  min-height: 100vh;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Helvetica Neue",
+    sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: hsl(var(--primary) / 0.16);
+}

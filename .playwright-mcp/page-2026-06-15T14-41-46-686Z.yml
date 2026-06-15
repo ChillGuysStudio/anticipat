@@ -1,0 +1,100 @@
+- generic [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e5]:
+        - heading "Anticipat" [level=1] [ref=e6]
+        - paragraph [ref=e7]: Plan your Prima Casă Plus early repayment.
+      - generic [ref=e8]:
+        - tablist [ref=e9]:
+          - tab "Dashboard" [ref=e10] [cursor=pointer]
+          - tab "History" [active] [selected] [ref=e11] [cursor=pointer]
+          - tab "Settings" [ref=e12] [cursor=pointer]
+        - tabpanel [ref=e79]:
+          - generic [ref=e80]:
+            - generic [ref=e81]:
+              - generic [ref=e83]:
+                - generic [ref=e84]: Total added to Anticipat Reserve
+                - generic [ref=e85]: 0 MDL
+              - generic [ref=e87]:
+                - generic [ref=e88]: Total paid anticipat
+                - generic [ref=e89]: 1,287 MDL
+              - generic [ref=e91]:
+                - generic [ref=e92]: Regular months paid
+                - generic [ref=e93]: "1"
+              - generic [ref=e95]:
+                - generic [ref=e96]: Estimated months saved
+                - generic [ref=e97]: 1 month
+            - generic [ref=e98]:
+              - heading "Confirmed monthly actions" [level=3] [ref=e101]
+              - table [ref=e104]:
+                - rowgroup [ref=e105]:
+                  - row "Month Regular payment Anticipat Reserve Early repayment Early type Skipped Note" [ref=e106]:
+                    - columnheader "Month" [ref=e107]
+                    - columnheader "Regular payment" [ref=e108]
+                    - columnheader "Anticipat Reserve" [ref=e109]
+                    - columnheader "Early repayment" [ref=e110]
+                    - columnheader "Early type" [ref=e111]
+                    - columnheader "Skipped" [ref=e112]
+                    - columnheader "Note" [ref=e113]
+                - rowgroup [ref=e114]:
+                  - row "June 2026 Paid 0 MDL 1,287 MDL Reduce term No" [ref=e115]:
+                    - cell "June 2026" [ref=e116]
+                    - cell "Paid" [ref=e117]
+                    - cell "0 MDL" [ref=e118]
+                    - cell "1,287 MDL" [ref=e119]
+                    - cell "Reduce term" [ref=e120]
+                    - cell "No" [ref=e121]
+                    - cell [ref=e122]
+            - generic [ref=e123]:
+              - generic [ref=e124]:
+                - heading "Anticipat Reserve progress" [level=3] [ref=e127]
+                - application [ref=e131]:
+                  - generic [ref=e142]:
+                    - generic [ref=e145]: 2026-06
+                    - generic [ref=e146]:
+                      - generic [ref=e148]: 0k
+                      - generic [ref=e150]: 0k
+                      - generic [ref=e152]: 0k
+                      - generic [ref=e154]: 0k
+                      - generic [ref=e156]: 0k
+              - generic [ref=e157]:
+                - heading "Early repayments over time" [level=3] [ref=e160]
+                - application [ref=e164]:
+                  - generic [ref=e172]:
+                    - generic [ref=e175]: 2026-06
+                    - generic [ref=e176]:
+                      - generic [ref=e178]: 0k
+                      - generic [ref=e180]: 0k
+                      - generic [ref=e182]: 1k
+                      - generic [ref=e184]: 1k
+                      - generic [ref=e186]: 1k
+              - generic [ref=e187]:
+                - heading "Loan balance comparison" [level=3] [ref=e190]
+                - generic [ref=e193]:
+                  - list [ref=e195]:
+                    - listitem [ref=e196]:
+                      - img "Current path legend icon" [ref=e197]
+                      - text: Current path
+                    - listitem [ref=e199]:
+                      - img "Without early repayment legend icon" [ref=e200]
+                      - text: Without early repayment
+                  - application [ref=e202]:
+                    - generic [ref=e217]:
+                      - generic [ref=e218]:
+                        - generic [ref=e220]: M1
+                        - generic [ref=e222]: M39
+                        - generic [ref=e224]: M77
+                        - generic [ref=e226]: M115
+                        - generic [ref=e228]: M153
+                        - generic [ref=e230]: M191
+                        - generic [ref=e232]: M229
+                      - generic [ref=e233]:
+                        - generic [ref=e235]: 0k
+                        - generic [ref=e237]: 200k
+                        - generic [ref=e239]: 400k
+                        - generic [ref=e241]: 600k
+                        - generic [ref=e243]: 800k
+  - button "Open Next.js Dev Tools" [ref=e74] [cursor=pointer]:
+    - img [ref=e75]
+  - alert [ref=e78]
+  - generic [ref=e244]: 200k
