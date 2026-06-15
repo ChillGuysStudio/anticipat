@@ -10,3 +10,10 @@ yarn-error.log*
 pnpm-debug.log*
 *.tsbuildinfo
 .DS_Store
+
+# Cloudflare
+.wrangler/
+.dev.vars
+
+# Playwright MCP logs
+.playwright-mcp/
