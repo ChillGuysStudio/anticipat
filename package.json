@@ -7,9 +7,9 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "pages:build": "npx @cloudflare/next-on-pages",
-    "pages:deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static",
-    "pages:dev": "wrangler pages dev"
+    "build:worker": "opennextjs-cloudflare build",
+    "deploy": "npm run build:worker && wrangler deploy",
+    "preview": "npm run build:worker && wrangler dev"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.5.2",
@@ -27,8 +27,8 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@cloudflare/next-on-pages": "^1.13.16",
     "@cloudflare/workers-types": "^4.20260615.1",
+    "@opennextjs/cloudflare": "^1.19.11",
     "@types/node": "^22.9.0",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",

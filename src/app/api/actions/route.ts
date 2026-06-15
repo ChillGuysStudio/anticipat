@@ -13,7 +13,7 @@ export async function GET() {
   }
 
   try {
-    const db = getDB();
+    const db = await getDB();
     const rows = await db
       .prepare(
         "SELECT data FROM monthly_actions WHERE user_id = ? ORDER BY month ASC"
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
 
   try {
     const action = (await request.json()) as MonthlyAction;
-    const db = getDB();
+    const db = await getDB();
 
     await db
       .prepare(
@@ -79,7 +79,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: "Missing id" }, { status: 400 });
     }
 
-    const db = getDB();
+    const db = await getDB();
     await db
       .prepare("DELETE FROM monthly_actions WHERE id = ? AND user_id = ?")
       .bind(id, userId)

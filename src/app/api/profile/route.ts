@@ -13,7 +13,7 @@ export async function GET() {
   }
 
   try {
-    const db = getDB();
+    const db = await getDB();
     const row = await db
       .prepare("SELECT data FROM loan_profiles WHERE user_id = ?")
       .bind(userId)
@@ -41,7 +41,7 @@ export async function PUT(request: Request) {
     const profile = (await request.json()) as LoanProfile;
     const now = new Date().toISOString();
 
-    const db = getDB();
+    const db = await getDB();
     await db
       .prepare(
         `INSERT INTO loan_profiles (user_id, data, updated_at)
