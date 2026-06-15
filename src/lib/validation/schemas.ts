@@ -8,6 +8,7 @@ const repaymentStrategy = z.enum(["reduce_term", "reduce_payment"]);
 
 export const LoanProfileSchema = z.object({
   remainingBalance: positiveMoney,
+  originalBalance: money.optional(),
   annualInterestRate: percent,
   monthlyPayment: positiveMoney,
   monthsLeft: months,

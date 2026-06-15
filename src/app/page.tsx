@@ -62,7 +62,8 @@ type ProfileFormState = Omit<
 >;
 
 const defaultProfileForm: ProfileFormState = {
-  remainingBalance: 800000,
+  remainingBalance: 802514,
+  originalBalance: 800000,
   monthlyPayment: 7000,
   monthsLeft: 240,
   currentEmergencyFund: 0
@@ -314,6 +315,12 @@ function ProfileFields({
   return (
     <div className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-2">
+        <MoneyInput
+          id="originalBalance"
+          label="Original mortgage balance (optional)"
+          value={form.originalBalance ?? 0}
+          onChange={(val) => onChange({ ...form, originalBalance: val })}
+        />
         <MoneyInput
           id="monthlyPayment"
           label="Monthly payment"
@@ -574,6 +581,9 @@ function DashboardSection({
 
         <SectionCard title="Loan">
           <div className="divide-y rounded-md border">
+            {profile.originalBalance ? (
+              <SnapshotRow label="Original balance" value={formatMoney(profile.originalBalance)} />
+            ) : null}
             <SnapshotRow label="Remaining balance" value={formatMoney(profile.remainingBalance)} />
             <SnapshotRow label="Total left to pay" value={formatMoney(totalLeftToPay)} />
             <SnapshotRow label="Future interest" value={formatMoney(futureInterestLeft)} />

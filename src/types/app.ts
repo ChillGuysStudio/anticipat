@@ -2,6 +2,7 @@ export type RepaymentStrategy = "reduce_term" | "reduce_payment";
 
 export type LoanProfile = {
   remainingBalance: number;
+  originalBalance?: number;
   annualInterestRate: number;
   monthlyPayment: number;
   monthsLeft: number;
