@@ -224,7 +224,7 @@ function SetupScreen({ onCreate }: { onCreate: (profile: LoanProfile) => void })
 
   return (
     <AppShell className="flex flex-col justify-center min-h-[80vh]">
-      <div className="flex justify-end mb-6">
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 md:top-8 md:right-10 z-50">
         {isLoaded && (
           isSignedIn ? (
             <UserButton />

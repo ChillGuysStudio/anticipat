@@ -29,6 +29,12 @@ export default function RootLayout({
           colorNeutral: "hsl(var(--foreground))",
           colorPrimary: "hsl(var(--primary))",
           colorPrimaryForeground: "hsl(var(--primary-foreground))",
+        },
+        elements: {
+          modalBackdrop: {
+            backdropFilter: "blur(8px)",
+            backgroundColor: "rgba(0, 0, 0, 0.4)",
+          }
         }
       }}
     >
