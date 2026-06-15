@@ -15,7 +15,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider appearance={{ theme: shadcn }}>
+    <ClerkProvider
+      appearance={{
+        theme: shadcn,
+        variables: {
+          colorBackground: "hsl(var(--card))",
+          colorDanger: "hsl(var(--destructive))",
+          colorForeground: "hsl(var(--card-foreground))",
+          colorInput: "hsl(var(--input))",
+          colorInputForeground: "hsl(var(--card-foreground))",
+          colorMuted: "hsl(var(--muted))",
+          colorMutedForeground: "hsl(var(--muted-foreground))",
+          colorNeutral: "hsl(var(--foreground))",
+          colorPrimary: "hsl(var(--primary))",
+          colorPrimaryForeground: "hsl(var(--primary-foreground))",
+        }
+      }}
+    >
       <html lang="en">
         <body>{children}</body>
       </html>
