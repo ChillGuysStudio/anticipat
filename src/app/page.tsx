@@ -39,7 +39,7 @@ import {
 } from "@/lib/finance/schedule";
 import { formatMonthKey, formatMonths, formatYearsAndMonths, getCurrentMonthKey } from "@/lib/format/dates";
 import { formatMoney, formatPercent } from "@/lib/format/money";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, useAuth, SignInButton } from "@clerk/nextjs";
 import {
   emptyAppState,
   loadAppState,
@@ -76,23 +76,43 @@ export default function Home() {
   const [state, setState] = React.useState<AppState>(emptyAppState);
   const [hydrated, setHydrated] = React.useState(false);
   const [tab, setTab] = React.useState<TabValue>("dashboard");
+  const { isSignedIn, isLoaded } = useAuth();
 
-  // On mount: load from localStorage immediately (fast), then fetch from D1 (authoritative)
+  // On mount: load from localStorage immediately (fast)
   React.useEffect(() => {
     setState(loadAppState());
     setHydrated(true);
-    syncFromServer().then((serverState) => {
-      setState(serverState);
-    });
   }, []);
 
-  // On every state change: persist locally and fire-and-forget sync to D1
+  // Fetch from D1 (authoritative) when auth is loaded and user is signed in
+  // Re-sync or clear local storage when sign-in status changes
+  React.useEffect(() => {
+    if (hydrated && isLoaded) {
+      if (isSignedIn) {
+        localStorage.setItem("wasSignedIn", "true");
+        syncFromServer().then((serverState) => {
+          setState(serverState);
+        });
+      } else {
+        const wasSignedIn = localStorage.getItem("wasSignedIn");
+        if (wasSignedIn === "true") {
+          localStorage.removeItem("wasSignedIn");
+          saveAppState(emptyAppState);
+          setState(emptyAppState);
+        }
+      }
+    }
+  }, [hydrated, isLoaded, isSignedIn]);
+
+  // On every state change: persist locally and sync to D1 if signed in
   React.useEffect(() => {
     if (hydrated) {
       saveAppState(state);
-      syncToServer(state);
+      if (isLoaded && isSignedIn) {
+        syncToServer(state);
+      }
     }
-  }, [hydrated, state]);
+  }, [hydrated, state, isLoaded, isSignedIn]);
 
   const updateState = React.useCallback((nextState: AppState) => {
     setState(nextState);
@@ -118,8 +138,30 @@ export default function Home() {
             title="Anticipat"
             subtitle="Plan your Prima Casă Plus early repayment."
           />
-          <UserButton />
+          {isLoaded && (
+            isSignedIn ? (
+              <UserButton />
+            ) : (
+              <SignInButton mode="modal">
+                <Button variant="outline">Sign in to save progress</Button>
+              </SignInButton>
+            )
+          )}
         </div>
+        {!isSignedIn && (
+          <Alert className="bg-muted/50 border-dashed">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <span className="text-muted-foreground">
+                Using local storage. Sign in to back up and sync your progress.
+              </span>
+              <SignInButton mode="modal">
+                <Button size="sm" variant="outline" className="self-start sm:self-auto">
+                  Sign in
+                </Button>
+              </SignInButton>
+            </div>
+          </Alert>
+        )}
         <Tabs value={tab} onValueChange={(value) => setTab(value as TabValue)}>
           <TabsList>
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
@@ -147,6 +189,7 @@ export default function Home() {
 function SetupScreen({ onCreate }: { onCreate: (profile: LoanProfile) => void }) {
   const [form, setForm] = React.useState<ProfileFormState>(defaultProfileForm);
   const [error, setError] = React.useState<string | null>(null);
+  const { isSignedIn, isLoaded } = useAuth();
 
   function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -180,13 +223,29 @@ function SetupScreen({ onCreate }: { onCreate: (profile: LoanProfile) => void })
   }
 
   return (
-    <AppShell className="flex items-center justify-center">
-      <form className="w-full max-w-3xl space-y-5" onSubmit={submit}>
+    <AppShell className="flex flex-col justify-center min-h-[80vh]">
+      <div className="flex justify-end mb-6">
+        {isLoaded && (
+          isSignedIn ? (
+            <UserButton />
+          ) : (
+            <SignInButton mode="modal">
+              <Button variant="outline">Sign in</Button>
+            </SignInButton>
+          )
+        )}
+      </div>
+      <form className="w-full max-w-3xl mx-auto space-y-5" onSubmit={submit}>
         <div className="space-y-2 text-center">
           <h1 className="text-3xl font-semibold tracking-tight">Set up your Prima Casă Plus mortgage</h1>
-          <p className="mx-auto max-w-2xl text-sm leading-6 text-muted-foreground">
+          <p className="mx-auto max-w-2xl text-sm leading-6 text-muted-foreground mb-2">
             Enter the payment from your schedule. The other loan value fills itself in.
           </p>
+          {!isSignedIn && (
+            <p className="text-xs text-muted-foreground">
+              Working locally. You can sign in to backup and sync your setup to the cloud.
+            </p>
+          )}
         </div>
         {error ? <Alert className="border-destructive/30 bg-destructive/5 text-destructive">{error}</Alert> : null}
         <SectionCard title="Loan details">
