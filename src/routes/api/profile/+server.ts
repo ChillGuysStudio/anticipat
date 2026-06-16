@@ -57,3 +57,23 @@ export const PUT: RequestHandler = async ({ locals, platform, request }) => {
     return json({ error: 'Internal server error' }, { status: 500 });
   }
 };
+
+export const DELETE: RequestHandler = async ({ locals, platform }) => {
+  const { userId } = locals.auth();
+  if (!userId) {
+    return json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const db = getDB(platform);
+    await db.batch([
+      db.prepare('DELETE FROM loan_profiles WHERE user_id = ?').bind(userId),
+      db.prepare('DELETE FROM monthly_actions WHERE user_id = ?').bind(userId)
+    ]);
+
+    return json({ ok: true });
+  } catch (err) {
+    console.error('[DELETE /api/profile]', err);
+    return json({ error: 'Internal server error' }, { status: 500 });
+  }
+};

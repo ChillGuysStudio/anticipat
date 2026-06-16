@@ -2,7 +2,7 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { UserButton } from 'svelte-clerk';
+  import { SignInButton, UserButton, useClerkContext } from 'svelte-clerk';
   import AppShell from '$lib/components/AppShell.svelte';
   import EmptyState from '$lib/components/EmptyState.svelte';
   import MoneyInput from '$lib/components/MoneyInput.svelte';
@@ -53,7 +53,8 @@
   };
 
   const defaultProfileForm: ProfileFormState = {
-    remainingBalance: 800000,
+    remainingBalance: 802514,
+    originalBalance: 1000000,
     monthlyPayment: 7000,
     monthsLeft: 240,
     currentEmergencyFund: 0
@@ -72,6 +73,11 @@
   let emergencyAmount = $state(0);
   let pendingAction: PendingAction | null = $state(null);
   let notice: string | null = $state(null);
+  let showConfirmReset = $state(false);
+
+  const clerk = useClerkContext();
+  let isClerkLoaded = $derived(clerk.isLoaded);
+  let isSignedIn = $derived(Boolean(clerk.auth.userId));
 
   let profile = $derived(appState.loanProfile);
   let monthlyInterest = $derived(profile ? calculateMonthlyInterest(profile.remainingBalance, profile.annualInterestRate) : 0);
@@ -99,15 +105,56 @@
   onMount(() => {
     appState = loadAppState();
     hydrated = true;
-    syncFromServer().then((serverState) => {
-      appState = serverState;
-    });
+
+    const callback = () => {
+      const modal = document.querySelector('.cl-modalContainer');
+      if (modal) {
+        document.documentElement.style.setProperty('overflow', 'hidden', 'important');
+        document.body.style.setProperty('overflow', 'hidden', 'important');
+        document.body.style.setProperty('height', '100vh', 'important');
+      } else {
+        document.documentElement.style.removeProperty('overflow');
+        document.body.style.removeProperty('overflow');
+        document.body.style.removeProperty('height');
+      }
+    };
+
+    callback();
+    const observer = new MutationObserver(callback);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty('overflow');
+      document.body.style.removeProperty('overflow');
+      document.body.style.removeProperty('height');
+    };
+  });
+
+  $effect(() => {
+    if (!hydrated || !isClerkLoaded) return;
+
+    if (isSignedIn) {
+      localStorage.setItem('wasSignedIn', 'true');
+      syncFromServer().then((serverState) => {
+        appState = serverState;
+      });
+    } else {
+      const wasSignedIn = localStorage.getItem('wasSignedIn');
+      if (wasSignedIn === 'true') {
+        localStorage.removeItem('wasSignedIn');
+        saveAppState(emptyAppState);
+        appState = emptyAppState;
+      }
+    }
   });
 
   $effect(() => {
     if (!hydrated) return;
     saveAppState(appState);
-    void syncToServer(appState);
+    if (isClerkLoaded && isSignedIn) {
+      void syncToServer(appState);
+    }
   });
 
   $effect(() => {
@@ -124,7 +171,13 @@
   });
 
   function createProfile() {
-    const result = SetupProfileSchema.safeParse(setupForm);
+    let finalForm = setupForm;
+    if (setupForm.originalBalance < setupForm.remainingBalance) {
+      finalForm = { ...setupForm, originalBalance: setupForm.remainingBalance };
+      setupForm = finalForm;
+    }
+
+    const result = SetupProfileSchema.safeParse(finalForm);
     if (!result.success) {
       setupError = 'Check the loan values and try again.';
       return;
@@ -182,7 +235,13 @@
   }
 
   function saveSettings() {
-    const result = SetupProfileSchema.safeParse(settingsForm);
+    let finalForm = settingsForm;
+    if (settingsForm.originalBalance < settingsForm.remainingBalance) {
+      finalForm = { ...settingsForm, originalBalance: settingsForm.remainingBalance };
+      settingsForm = finalForm;
+    }
+
+    const result = SetupProfileSchema.safeParse(finalForm);
     if (!result.success || !profile) {
       settingsMessage = 'Check the loan values and try again.';
       return;
@@ -199,6 +258,20 @@
       }
     };
     settingsMessage = 'Settings saved.';
+  }
+
+  async function handleReset() {
+    if (isSignedIn) {
+      try {
+        await fetch('/api/profile', { method: 'DELETE' });
+      } catch (err) {
+        console.error('Failed to delete profile from server:', err);
+      }
+    }
+
+    appState = emptyAppState;
+    saveAppState(emptyAppState);
+    showConfirmReset = false;
   }
 
   function recordAction(input: ActionInput) {
@@ -339,6 +412,7 @@
   function profileToForm(currentProfile: LoanProfile): ProfileFormState {
     return {
       remainingBalance: currentProfile.remainingBalance,
+      originalBalance: currentProfile.originalBalance ?? currentProfile.remainingBalance,
       monthlyPayment: currentProfile.monthlyPayment,
       monthsLeft: currentProfile.monthsLeft,
       currentEmergencyFund: currentProfile.currentEmergencyFund
@@ -376,13 +450,32 @@
     <p class="text-sm text-muted-foreground">Loading Anticipat...</p>
   </AppShell>
 {:else if !profile}
-  <AppShell class="flex items-center justify-center">
-    <form class="w-full max-w-3xl space-y-5" onsubmit={(event) => { event.preventDefault(); createProfile(); }}>
+  <AppShell class="flex min-h-[80vh] flex-col justify-center">
+    <div class="absolute right-4 top-4 z-50 sm:right-6 sm:top-6 md:right-10 md:top-8">
+      {#if isClerkLoaded}
+        {#if isSignedIn}
+          <UserButton />
+        {:else}
+          <SignInButton mode="modal" asChild>
+            {#snippet children({ signIn })}
+              <Button type="button" variant="outline" onclick={signIn}>Sign in</Button>
+            {/snippet}
+          </SignInButton>
+        {/if}
+      {/if}
+    </div>
+
+    <form class="mx-auto w-full max-w-3xl space-y-5" onsubmit={(event) => { event.preventDefault(); createProfile(); }}>
       <div class="space-y-2 text-center">
         <h1 class="text-3xl font-semibold tracking-tight">Set up your Prima Casă Plus mortgage</h1>
-        <p class="mx-auto max-w-2xl text-sm leading-6 text-muted-foreground">
+        <p class="mx-auto mb-2 max-w-2xl text-sm leading-6 text-muted-foreground">
           Enter the payment from your schedule. The other loan value fills itself in.
         </p>
+        {#if !isSignedIn}
+          <p class="text-xs text-muted-foreground">
+            Working locally. You can sign in to backup and sync your setup to the cloud.
+          </p>
+        {/if}
       </div>
       {#if setupError}
         <Alert class="border-destructive/30 bg-destructive/5 text-destructive">{setupError}</Alert>
@@ -390,6 +483,17 @@
       <SectionCard title="Loan details">
         <div class="space-y-4">
           <div class="grid gap-4 sm:grid-cols-2">
+            <MoneyInput
+              id="setupOriginalBalance"
+              label="Original mortgage balance"
+              value={setupForm.originalBalance}
+              onValueChange={(value) => (setupForm = { ...setupForm, originalBalance: value })}
+              onBlur={() => {
+                if (setupForm.originalBalance < setupForm.remainingBalance) {
+                  setupForm = { ...setupForm, originalBalance: setupForm.remainingBalance };
+                }
+              }}
+            />
             <MoneyInput id="setupMonthlyPayment" label="Monthly payment" value={setupForm.monthlyPayment} onValueChange={(value) => (setupForm = updateFormFromMonthlyPayment(setupForm, value))} />
             <MoneyInput id="setupRemainingBalance" label="Remaining mortgage balance" value={setupForm.remainingBalance} onValueChange={(value) => (setupForm = updateFormFromRemainingBalance(setupForm, value))} />
             <MonthInput id="setupMonthsLeft" label="Months left" value={setupForm.monthsLeft} onValueChange={(value) => (setupForm = updateFormFromMonthsLeft(setupForm, value))} />
@@ -409,7 +513,17 @@
           <h1 class="text-3xl font-semibold tracking-tight">Anticipat</h1>
           <p class="text-sm leading-6 text-muted-foreground">Plan your Prima Casă Plus early repayment.</p>
         </div>
-        <UserButton />
+        {#if isClerkLoaded}
+          {#if isSignedIn}
+            <UserButton />
+          {:else}
+            <SignInButton mode="modal" asChild>
+              {#snippet children({ signIn })}
+                <Button type="button" variant="outline" onclick={signIn}>Sign in to save progress</Button>
+              {/snippet}
+            </SignInButton>
+          {/if}
+        {/if}
       </div>
 
       <Tabs.Root bind:value={tab}>
@@ -530,6 +644,7 @@
 
               <SectionCard title="Loan">
                 <div class="divide-y rounded-md border">
+                  <div class="flex items-center justify-between gap-4 p-4"><span class="text-sm text-muted-foreground">Original balance</span><span class="text-sm font-semibold">{formatMoney(profile.originalBalance)}</span></div>
                   <div class="flex items-center justify-between gap-4 p-4"><span class="text-sm text-muted-foreground">Remaining balance</span><span class="text-sm font-semibold">{formatMoney(profile.remainingBalance)}</span></div>
                   <div class="flex items-center justify-between gap-4 p-4"><span class="text-sm text-muted-foreground">Total left to pay</span><span class="text-sm font-semibold">{formatMoney(totalLeftToPay)}</span></div>
                   <div class="flex items-center justify-between gap-4 p-4"><span class="text-sm text-muted-foreground">Future interest</span><span class="text-sm font-semibold">{formatMoney(futureInterestLeft)}</span></div>
@@ -628,12 +743,24 @@
             <SectionCard title="Loan profile">
               <div class="space-y-4">
                 <div class="grid gap-4 sm:grid-cols-2">
+                  <MoneyInput
+                    id="settingsOriginalBalance"
+                    label="Original mortgage balance"
+                    value={settingsForm.originalBalance}
+                    onValueChange={(value) => (settingsForm = { ...settingsForm, originalBalance: value })}
+                    onBlur={() => {
+                      if (settingsForm.originalBalance < settingsForm.remainingBalance) {
+                        settingsForm = { ...settingsForm, originalBalance: settingsForm.remainingBalance };
+                      }
+                    }}
+                  />
                   <MoneyInput id="settingsMonthlyPayment" label="Monthly payment" value={settingsForm.monthlyPayment} onValueChange={(value) => (settingsForm = updateFormFromMonthlyPayment(settingsForm, value))} />
                   <MoneyInput id="settingsRemainingBalance" label="Remaining mortgage balance" value={settingsForm.remainingBalance} onValueChange={(value) => (settingsForm = updateFormFromRemainingBalance(settingsForm, value))} />
                   <MonthInput id="settingsMonthsLeft" label="Months left" value={settingsForm.monthsLeft} onValueChange={(value) => (settingsForm = updateFormFromMonthsLeft(settingsForm, value))} />
                 </div>
               </div>
-              <div class="mt-5 flex justify-end">
+              <div class="mt-5 flex justify-between gap-4">
+                <Button type="button" variant="destructive" onclick={() => (showConfirmReset = true)}>Reset mortgage</Button>
                 <Button type="button" onclick={saveSettings}>Save changes</Button>
               </div>
             </SectionCard>
@@ -651,6 +778,21 @@
         <Dialog.Footer>
           <Button type="button" variant="outline" onclick={() => (pendingAction = null)}>Cancel</Button>
           <Button type="button" onclick={confirmPendingAction}>Yes</Button>
+        </Dialog.Footer>
+      </Dialog.Content>
+    </Dialog.Root>
+
+    <Dialog.Root open={showConfirmReset} onOpenChange={(open) => { if (!open) showConfirmReset = false; }}>
+      <Dialog.Content>
+        <Dialog.Header>
+          <Dialog.Title>Reset mortgage profile?</Dialog.Title>
+          <Dialog.Description>
+            This will permanently delete your mortgage profile and all monthly actions. This action cannot be undone.
+          </Dialog.Description>
+        </Dialog.Header>
+        <Dialog.Footer>
+          <Button type="button" variant="outline" onclick={() => (showConfirmReset = false)}>Cancel</Button>
+          <Button type="button" variant="destructive" onclick={handleReset}>Reset mortgage</Button>
         </Dialog.Footer>
       </Dialog.Content>
     </Dialog.Root>

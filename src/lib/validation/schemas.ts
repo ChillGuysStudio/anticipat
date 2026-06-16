@@ -6,8 +6,9 @@ const percent = z.coerce.number().finite().min(0).max(100);
 const months = z.coerce.number().int().positive();
 const repaymentStrategy = z.enum(["reduce_term", "reduce_payment"]);
 
-export const LoanProfileSchema = z.object({
+const BaseLoanProfile = z.object({
   remainingBalance: positiveMoney,
+  originalBalance: positiveMoney,
   annualInterestRate: percent,
   monthlyPayment: positiveMoney,
   monthsLeft: months,
@@ -18,6 +19,8 @@ export const LoanProfileSchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string()
 });
+
+export const LoanProfileSchema = BaseLoanProfile;
 
 export const MonthlyActionSchema = z.object({
   id: z.string().min(1),
@@ -35,7 +38,7 @@ export const AppStateSchema = z.object({
   version: z.literal(1)
 });
 
-export const SetupProfileSchema = LoanProfileSchema.omit({
+export const SetupProfileSchema = BaseLoanProfile.omit({
   annualInterestRate: true,
   repaymentStrategy: true,
   createdAt: true,

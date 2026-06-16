@@ -8,7 +8,8 @@
     value = $bindable(0),
     helper,
     min = 0,
-    onValueChange
+    onValueChange,
+    onBlur
   }: {
     id: string;
     label: string;
@@ -16,6 +17,7 @@
     helper?: string;
     min?: number;
     onValueChange?: (value: number) => void;
+    onBlur?: () => void;
   } = $props();
 
   function handleInput(event: Event) {
@@ -36,6 +38,7 @@
       type="number"
       value={Number.isFinite(value) ? value : 0}
       oninput={handleInput}
+      onblur={onBlur}
       class="pr-14"
     />
     <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
