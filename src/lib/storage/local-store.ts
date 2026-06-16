@@ -1,6 +1,6 @@
-import type { AppState, LoanProfile, MonthlyAction } from "@/types/app";
-import { PRIMA_CASA_PLUS_ANNUAL_INTEREST_RATE } from "@/lib/finance/mortgage";
-import { AppStateSchema } from "@/lib/validation/schemas";
+import type { AppState, LoanProfile, MonthlyAction } from "$lib/types/app";
+import { PRIMA_CASA_PLUS_ANNUAL_INTEREST_RATE } from "$lib/finance/mortgage";
+import { AppStateSchema } from "$lib/validation/schemas";
 
 export const STORAGE_KEY = "anticipat-app-state-v1";
 

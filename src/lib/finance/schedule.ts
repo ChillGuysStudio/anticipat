@@ -1,5 +1,5 @@
 import { calculateMonthlyPayment, calculateMonthlyPrincipal, calculateMonthlyRate } from "./mortgage";
-import type { ReducePaymentResult, ReduceTermResult, ScheduleResult } from "@/types/app";
+import type { ReducePaymentResult, ReduceTermResult, ScheduleResult } from "$lib/types/app";
 
 type ScheduleInput = {
   balance: number;

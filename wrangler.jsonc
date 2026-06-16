@@ -1,0 +1,21 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "anticipat",
+  "compatibility_date": "2026-06-15",
+  "compatibility_flags": ["nodejs_als"],
+
+  // SvelteKit adapter-cloudflare output for Cloudflare Workers Static Assets
+  "main": ".svelte-kit/cloudflare/_worker.js",
+  "assets": {
+    "binding": "ASSETS",
+    "directory": ".svelte-kit/cloudflare"
+  },
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "anticipat-db",
+      "database_id": "8b6a9cda-506e-4271-b59d-614e56b1e7e6"
+    }
+  ]
+}
